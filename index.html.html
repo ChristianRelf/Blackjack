@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+
+    <title>Casino Blackjack</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Authentication Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-container">
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">LOGIN</div>
+                <div class="auth-tab" data-tab="register">REGISTER</div>
+            </div>
+            
+            <div class="auth-content active" id="loginContent">
+                <h2>Welcome Back</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUsername">Username</label>
+                        <input type="text" id="loginUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <div class="form-error" id="loginError"></div>
+                    <button type="submit" class="auth-btn">LOGIN</button>
+                </form>
+                <div class="guest-login">
+                    <button id="guestLoginBtn">Play as Guest</button>
+                </div>
+            </div>
+            
+            <div class="auth-content" id="registerContent">
+                <h2>Create Account</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerUsername">Username</label>
+                        <input type="text" id="registerUsername" required minlength="3" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" required>
+                    </div>
+                    <div class="form-error" id="registerError"></div>
+                    <button type="submit" class="auth-btn">CREATE ACCOUNT</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Menu -->
+    <div class="main-menu" id="mainMenu">
+        <div class="menu-background"></div>
+        <div class="logo-container">
+            <div class="logo-inner">
+                <h1 class="menu-title">CASINO BLACKJACK</h1>
+                <div class="logo-cards">
+                    <div class="logo-card ace">A♠</div>
+                    <div class="logo-card king">K♥</div>
+                </div>
+            </div>
+        </div>
+        <div class="user-welcome" id="userWelcome">Welcome, Guest</div>
+        <div class="menu-options">
+            <div class="menu-option" id="playBtn">
+                <span class="option-icon">♠</span>
+                <span class="option-text">PLAY</span>
+            </div>
+            <div class="menu-option" id="leaderboardBtn">
+                <span class="option-icon">♛</span>
+                <span class="option-text">LEADERBOARD</span>
+            </div>
+            <div class="menu-option" id="settingsBtn">
+                <span class="option-icon">⚙</span>
+                <span class="option-text">SETTINGS</span>
+            </div>
+            <div class="menu-option" id="logoutBtn">
+                <span class="option-icon">↪</span>
+                <span class="option-text">LOGOUT</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div class="game-container">
+        <div class="header-nav">
+            <button class="nav-btn" id="menuBtn">
+                <span class="btn-icon">≡</span>
+                <span class="btn-text">MENU</span>
+            </button>
+            <div class="player-info">
+                <div class="player-name" id="playerName">Guest</div>
+                <div class="player-level">Level <span id="playerLevel">1</span></div>
+            </div>
+            <div class="nav-buttons">
+                <button class="nav-btn" id="settingsNavBtn">
+                    <span class="btn-icon">⚙</span>
+                    <span class="btn-text">SETTINGS</span>
+                </button>
+                <button class="nav-btn" id="leaderboardNavBtn">
+                    <span class="btn-icon">♛</span>
+                    <span class="btn-text">LEADERBOARD</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="game-table">
+            <!-- Game Status -->
+            <div class="game-status" id="gameStatus">
+                <span class="status-text">Place your bet to start</span>
+                <div class="status-progress">
+                    <div class="progress-bar" id="timerBar"></div>
+                </div>
+            </div>
+
+            <!-- Balance Display -->
+            <div class="balance-display">
+                <div class="balance-label">BALANCE</div>
+                <div class="balance-amount" id="balanceAmount">$1000</div>
+                <div class="balance-change" id="balanceChange"></div>
+            </div>
+
+            <!-- Dealer Area -->
+            <div class="dealer-area">
+                <div class="dealer-label">
+                    <span class="label-icon">♠</span>
+                    <span class="label-text">DEALER</span>
+                </div>
+                <div class="hand" id="dealerHand">
+                    <!-- Cards will be added here dynamically -->
+                </div>
+                <div class="hand-value" id="dealerValue"></div>
+            </div>
+
+            <!-- Player Area -->
+            <div class="player-area">
+                <div class="player-label">
+                    <span class="label-icon">♣</span>
+                    <span class="label-text">PLAYER</span>
+                </div>
+                <div class="hand" id="playerHand">
+                    <!-- Cards will be added here dynamically -->
+                </div>
+                <div class="hand-value" id="playerValue"></div>
+                <div class="win-probability" id="winProbability"></div>
+            </div>
+
+            <!-- Game Controls -->
+            <div class="game-controls">
+                <button class="control-btn hit-btn" id="hitBtn" disabled>
+                    <span class="btn-icon">+</span>
+                    <span class="btn-text">HIT</span>
+                </button>
+                <button class="control-btn stand-btn" id="standBtn" disabled>
+                    <span class="btn-icon">■</span>
+                    <span class="btn-text">STAND</span>
+                </button>
+                <button class="control-btn deal-btn" id="dealBtn" disabled>
+                    <span class="btn-icon">♦</span>
+                    <span class="btn-text">DEAL</span>
+                </button>
+                <button class="control-btn double-btn" id="doubleBtn" disabled>
+                    <span class="btn-icon">×2</span>
+                    <span class="btn-text">DOUBLE</span>
+                </button>
+            </div>
+
+            <!-- Game Statistics -->
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div class="stat-label">WINS</div>
+                    <div class="stat-value" id="winCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">LOSSES</div>
+                    <div class="stat-value" id="lossCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">PUSHES</div>
+                    <div class="stat-value" id="pushCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">BLACKJACKS</div>
+                    <div class="stat-value" id="blackjackCount">0</div>
+                </div>
+            </div>
+
+            <!-- Betting Area -->
+            <div class="betting-area">
+                <div class="bet-controls">
+                    <button class="bet-control-btn" id="clearBetBtn">CLEAR</button>
+                    <div class="bet-amount">BET: $<span id="betAmount">0</span></div>
+                    <button class="bet-control-btn" id="maxBetBtn">MAX</button>
+                </div>
+                <div class="current-bet" id="currentBet">
+                    <!-- Bet chips will be added here dynamically -->
+                </div>
+            </div>
+
+            <!-- Chips Container -->
+            <div class="chips-container">
+                <div class="chips-title">SELECT CHIPS</div>
+                <div class="chips">
+                    <div class="chip chip-1" data-value="1">
+                        <div class="chip-inner">$1</div>
+                    </div>
+                    <div class="chip chip-5" data-value="5">
+                        <div class="chip-inner">$5</div>
+                    </div>
+                    <div class="chip chip-10" data-value="10">
+                        <div class="chip-inner">$10</div>
+                    </div>
+                    <div class="chip chip-25" data-value="25">
+                        <div class="chip-inner">$25</div>
+                    </div>
+                    <div class="chip chip-100" data-value="100">
+                        <div class="chip-inner">$100</div>
+                    </div>
+                    <div class="chip chip-500" data-value="500">
+                        <div class="chip-inner">$500</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Deck -->
+        <div class="card-deck" id="cardDeck">
+            <div class="card card-back"></div>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="panel-header">
+            <h2 class="settings-title">SETTINGS</h2>
+            <button class="close-btn" id="closeSettings">×</button>
+        </div>
+        
+        <div class="settings-content">
+            <div class="settings-section">
+                <h3 class="section-title">Audio</h3>
+                <div class="settings-option">
+                    <label class="settings-label">Sound Volume</label>
+                    <div class="slider-container">
+                        <input type="range" class="settings-slider" id="soundVolume" min="0" max="100" value="50">
+                        <span class="slider-value" id="soundVolumeValue">50%</span>
+                    </div>
+                </div>
+                <div class="settings-option">
+                    <label class="settings-label">Music Volume</label>
+                    <div class="slider-container">
+                        <input type="range" class="settings-slider" id="musicVolume" min="0" max="100" value="30">
+                        <span class="slider-value" id="musicVolumeValue">30%</span>
+                    </div>
+                </div>
+                <div class="settings-option checkbox-option">
+                    <label class="settings-label">
+                        <input type="checkbox" class="settings-checkbox" id="enableSoundEffects" checked>
+                        <span class="checkbox-text">Enable Sound Effects</span>
+                    </label>
+                </div>
+                <div class="settings-option checkbox-option">
+                    <label class="settings-label">
+                        <input type="checkbox" class="settings-checkbox" id="enableMusic" checked>
+                        <span class="checkbox-text">Enable Background Music</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <h3 class="section-title">Display</h3>
+                <div class="settings-option checkbox-option">
+                    <label class="settings-label">
+                        <input type="checkbox" class="settings-checkbox" id="enableAnimations" checked>
+                        <span class="checkbox-text">Enable Animations</span>
+                    </label>
+                </div>
+                <div class="settings-option">
+                    <label class="settings-label">Card Animation Speed</label>
+                    <div class="slider-container">
+                        <input type="range" class="settings-slider" id="animationSpeed" min="0.5" max="2" step="0.1" value="1">
+                        <span class="slider-value" id="animationSpeedValue">1×</span>
+                    </div>
+                </div>
+                <div class="settings-option">
+                    <label class="settings-label">Graphics Quality</label>
+                    <select id="graphicsQuality" class="settings-select">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="settings-option checkbox-option">
+                    <label class="settings-label">
+                        <input type="checkbox" class="settings-checkbox" id="showProbability" checked>
+                        <span class="checkbox-text">Show Win Probability</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <h3 class="section-title">Gameplay</h3>
+                <div class="settings-option">
+                    <label class="settings-label">Dealing Speed</label>
+                    <div class="slider-container">
+                        <input type="range" class="settings-slider" id="dealingSpeed" min="0.5" max="2" step="0.1" value="1">
+                        <span class="slider-value" id="dealingSpeedValue">1×</span>
+                    </div>
+                </div>
+                <div class="settings-option checkbox-option">
+                    <label class="settings-label">
+                        <input type="checkbox" class="settings-checkbox" id="showTips" checked>
+                        <span class="checkbox-text">Show Game Tips</span>
+                    </label>
+                </div>
+                <div class="settings-option checkbox-option">
+                    <label class="settings-label">
+                        <input type="checkbox" class="settings-checkbox" id="enableAutoStand" checked>
+                        <span class="checkbox-text">Auto-Stand on 17+</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="settings-buttons">
+            <button class="settings-btn cancel-btn" id="resetSettings">RESET</button>
+            <button class="settings-btn save-btn" id="saveSettings">SAVE</button>
+        </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="leaderboard" id="leaderboardPanel">
+        <div class="panel-header">
+            <h2 class="leaderboard-title">LEADERBOARD</h2>
+            <button class="close-btn" id="closeLeaderboard">×</button>
+        </div>
+        
+        <div class="leaderboard-tabs">
+            <div class="leaderboard-tab active" data-tab="overall">OVERALL</div>
+            <div class="leaderboard-tab" data-tab="weekly">WEEKLY</div>
+            <div class="leaderboard-tab" data-tab="friends">FRIENDS</div>
+        </div>
+        
+        <div class="leaderboard-filter">
+            <select id="leaderboardFilter" class="leaderboard-select">
+                <option value="winnings">Highest Winnings</option>
+                <option value="games">Most Games</option>
+                <option value="winrate">Best Win Rate</option>
+                <option value="blackjacks">Most Blackjacks</option>
+            </select>
+        </div>
+        
+        <div class="player-ranking">
+            <div class="ranking-title">YOUR RANKING</div>
+            <div class="player-stats" id="playerRanking">
+                <div class="player-rank">#<span id="playerRankNumber">--</span></div>
+                <div class="player-rank-details">
+                    <div class="rank-name" id="playerRankName">Guest</div>
+                    <div class="rank-value" id="playerRankValue">$0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="leaderboard-content">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th class="leaderboard-rank">Rank</th>
+                        <th>Player</th>
+                        <th id="leaderboardValueHeader">Winnings</th>
+                        <th>Games</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    <!-- This will be populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Game Result Modal -->
+    <div class="result-modal" id="resultModal">
+        <div class="result-content">
+            <h2 class="result-title" id="resultTitle">WIN!</h2>
+            <div class="result-cards">
+                <div class="result-dealer-cards">
+                    <div class="result-label">DEALER</div>
+                    <div class="result-value" id="resultDealerValue">21</div>
+                    <div class="result-hand" id="resultDealerHand"></div>
+                </div>
+                <div class="result-player-cards">
+                    <div class="result-label">PLAYER</div>
+                    <div class="result-value" id="resultPlayerValue">21</div>
+                    <div class="result-hand" id="resultPlayerHand"></div>
+                </div>
+            </div>
+            <p class="result-message" id="resultMessage">You beat the dealer!</p>
+            <div class="result-amount" id="resultAmount">+$100</div>
+            <div class="result-xp">
+                <div class="xp-label">XP EARNED</div>
+                <div class="xp-bar">
+                    <div class="xp-progress" id="xpProgress"></div>
+                </div>
+                <div class="xp-amount" id="xpAmount">+25 XP</div>
+            </div>
+            <button class="continue-btn" id="continueBtn">CONTINUE</button>
+        </div>
+    </div>
+
+    <!-- Level Up Modal -->
+    <div class="level-up-modal" id="levelUpModal">
+        <div class="level-up-content">
+            <h2 class="level-up-title">LEVEL UP!</h2>
+            <div class="level-number">LEVEL <span id="newLevel">2</span></div>
+            <div class="level-icon">♦</div>
+            <div class="level-rewards">
+                <h3>REWARDS</h3>
+                <ul class="rewards-list" id="rewardsList">
+                    <li class="reward-item">$500 Bonus Chips</li>
+                    <li class="reward-item">New Table Unlocked</li>
+                </ul>
+            </div>
+            <button class="continue-btn" id="levelUpContinueBtn">CONTINUE</button>
+        </div>
+    </div>
+
+    <!-- Game Tips Modal -->
+    <div class="tips-modal" id="tipsModal">
+        <div class="tips-content">
+            <div class="tips-header">
+                <h2 class="tips-title">PRO TIP</h2>
+                <button class="close-btn" id="closeTips">×</button>
+            </div>
+            <p class="tip-text" id="tipText">Always stand on a hard 17 or higher.</p>
+            <div class="tip-checkbox">
+                <label>
+                    <input type="checkbox" id="dontShowTips">
+                    <span>Don't show tips again</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner-icon">♠</div>
+        </div>
+        <div class="loading-text" id="loadingText">Loading...</div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script src="auth.js"></script>
+    <script src="leaderboard.js"></script>
+</body>
+</html>
